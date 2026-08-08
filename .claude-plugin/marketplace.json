@@ -9,7 +9,7 @@
     {
       "name": "aurion-aios-builder",
       "description": "Build AI employees in Claude and synchronize them to Aurion AIOS over its hosted OAuth Remote MCP.",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "author": {
         "name": "Aurion"
       },
