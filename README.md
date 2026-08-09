@@ -22,4 +22,4 @@ Cowork users click **Update** on the marketplace. Claude Code users run:
 
 The Plugin connects only to https://aurion-aios-mcp.lazyoffice.app/mcp. Installation does not grant AIOS access; every user must still authenticate with an enabled AIOS account through OAuth.
 
-Version: 1.2.1
+Version: 1.3.0
