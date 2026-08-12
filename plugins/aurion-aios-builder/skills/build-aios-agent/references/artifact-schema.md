@@ -43,8 +43,6 @@ Provide structured fields and, when available, the complete `contentMd` that sho
 }
 ```
 
-Files are not embedded in this JSON artifact. Upload them with `upload_agent_build_file`. Set `useAsTemplate: true` only when the user wants the file reused by the Skill; after FDE authorization AIOS records it in the Skill `assets` manifest and writes it under `assets/templates/`. General source material remains reference context and is not mislabeled as a Template.
-
 ## Memory
 
 Facts are stable business facts. Preferences describe how this user wants work performed. Glossary explains organization-specific terms. Documents are relative Markdown paths only.

@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "aurion-aios",
+  "name": "aurion-aios-plugin-marketplace",
   "description": "Aurion AIOS customer-side Claude integrations. All services run on the central AIOS host.",
   "owner": {
     "name": "Aurion"
@@ -8,14 +8,14 @@
   "plugins": [
     {
       "name": "aurion-aios-builder",
-      "description": "Build AI employees, invoke approved employees, and request governed schedules over the hosted AIOS OAuth Remote MCP.",
-      "version": "1.3.0",
+      "description": "Build AI employees, invoke approved employees, and request governed schedules over the hosted Aurion AIOS OAuth Remote MCP.",
+      "version": "1.4.0",
       "author": {
         "name": "Aurion"
       },
       "source": "./plugins/aurion-aios-builder",
       "category": "productivity",
-      "homepage": "https://aurion-aios.lazyoffice.app/agent-builds"
+      "homepage": "https://aios-new.lazyoffice.app/agent-builds"
     }
   ]
 }

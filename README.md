@@ -1,8 +1,26 @@
 # Aurion AIOS Plugin Marketplace
 
-Private Claude Plugin marketplace for Aurion AIOS customers.
+Shared Plugin marketplace for Aurion AIOS customers.
 
-## Install
+**One private GitHub repository** (`Kevin-aurion/aurion-aios-plugin-marketplace`) supports **ChatGPT Desktop Plugins**, **Codex CLI**, and **Claude**. Claude reads `.claude-plugin/marketplace.json`; ChatGPT Desktop and Codex CLI read `.agents/plugins/marketplace.json`. Both catalogs install the same plugin: `aurion-aios-builder`.
+
+## Install — ChatGPT Desktop Plugins / Codex CLI
+
+### Codex CLI
+
+```bash
+codex plugin marketplace add Kevin-aurion/aurion-aios-plugin-marketplace
+codex plugin add aurion-aios-builder@aurion-aios-plugin-marketplace
+```
+
+### ChatGPT Desktop Plugins
+
+1. Open **Plugins**.
+2. Import / add a marketplace from a **GitHub repository**.
+3. Use the same repository: `Kevin-aurion/aurion-aios-plugin-marketplace`.
+4. Install `aurion-aios-builder` when prompted.
+
+## Install — Claude
 
 In Claude Cowork, open **Customize → Plugins → Add marketplace** and add:
 
@@ -12,14 +30,21 @@ In Claude Code:
 
 `/plugin marketplace add Kevin-aurion/aurion-aios-plugin-marketplace`
 
-`/plugin install aurion-aios-builder@aurion-aios`
+`/plugin install aurion-aios-builder@aurion-aios-plugin-marketplace`
 
 ## Update
 
 Cowork users click **Update** on the marketplace. Claude Code users run:
 
-`/plugin marketplace update aurion-aios`
+`/plugin marketplace update aurion-aios-plugin-marketplace`
 
-The Plugin connects only to https://aurion-aios-mcp.lazyoffice.app/mcp. Installation does not grant AIOS access; every user must still authenticate with an enabled AIOS account through OAuth.
+Codex CLI users re-add or update the marketplace, then reinstall/update the plugin as needed:
 
-Version: 1.3.0
+```bash
+codex plugin marketplace add Kevin-aurion/aurion-aios-plugin-marketplace
+codex plugin add aurion-aios-builder@aurion-aios-plugin-marketplace
+```
+
+The Plugin connects only to https://aios-mcp.lazyoffice.app/mcp. Installation does not grant AIOS access; every user must still authenticate with an enabled AIOS account through OAuth.
+
+Version: 1.4.0

@@ -7,7 +7,7 @@ description: Build, train, revise, continue, or test an Aurion AIOS employee thr
 
 Build the employee in the current conversation. Treat AIOS as the durable system of record and the FDE approval boundary.
 
-Use the hosted HTTPS Remote MCP at `https://aurion-aios-mcp.lazyoffice.app/mcp`. Never ask the customer to install or run an AIOS backend, database, tunnel, Node service, or local MCP server.
+Use the hosted HTTPS Remote MCP at `https://aios-mcp.lazyoffice.app/mcp`. Never ask the customer to install or run an AIOS backend, database, tunnel, Node service, or local MCP server.
 
 ## Enforce the governance boundary
 
@@ -22,20 +22,11 @@ Use the hosted HTTPS Remote MCP at `https://aurion-aios-mcp.lazyoffice.app/mcp`.
 
 When the user explicitly asks to build or train an employee, begin synchronization before conducting a long interview.
 
-Before creating anything, call `list_my_agents`. Decide among these paths:
-
-- If the user clearly names one listed employee, continue it by passing that `targetAgentId` to `start_agent_build`.
-- If the request sounds like continuation, training, teaching, correction, or improvement but no single employee is unambiguous, show a short list and ask: “這一次想訓練哪一位員工？” Include “都不是，建立新員工.” Do not start a build until they choose.
-- If the user explicitly wants a new employee, ask what they want to call it unless they already supplied a name. Never silently invent the final employee name.
-- If the request is not actually about building or training an employee or reusable Skill, do not start or synchronize an Agent build.
-
-Use `set_agent_build_name` if the user chooses or corrects a draft name after a hook already opened the shadow session. To rename a live employee, use `request_agent_rename`; explain that the rename waits for FDE approval.
-
 ### ChatGPT, Codex, Claude Chat, or Cursor without lifecycle hooks
 
-For a new build after the user has chosen the name:
+For a new build:
 
-1. Call `start_agent_build` with the exact initial request, the user-chosen `requestedAgentName`, `source: CHATGPT` in ChatGPT/Codex, and a stable conversation id when the client exposes one. For continuation, also pass the selected `targetAgentId`.
+1. Call `start_agent_build` immediately with the exact initial request, `source: CHATGPT` in ChatGPT/Codex, and a stable conversation id when the client exposes one.
 2. Keep the returned `session.id` for every later tool call.
 3. Form one contextual question plus a concrete recommendation.
 4. Create a provisional complete artifact from what is known now. Mark uncertainty in `understanding.hypotheses`, `openBranches`, and provisional decisions.
@@ -51,15 +42,11 @@ For every later material turn:
 
 `upsert_agent_build_snapshot` is retry-safe. Reuse an event id only for the same paired turn and artifact; use a new id for new content.
 
-Use `list_agent_builds` to locate unfinished Builder sessions after the employee itself has been selected. Agent identity selection comes from `list_my_agents`; build-session resumption comes from `list_agent_builds`.
+For a continuation request, call `list_agent_builds`. Resume only when the user names the intended build or one unfinished match is unambiguous. Otherwise show a short candidate list and ask which to continue.
 
 ### Claude Code or Cowork with the AIOS Plugin
 
-`UserPromptSubmit` and `Stop` hooks normally create or resume the build, save the conversation, and queue the next background draft. Do not duplicate hook-saved turns. Use the build id in hook context for files, high-fidelity artifacts, review, or testing.
-
-The prompt hook may return an employee-selection instruction without a build id. In that case, ask the user to select from the owner-scoped list and do not imply a new draft exists. Once selected, call `start_agent_build` with `targetAgentId`; if they choose none, ask for the new employee’s name first.
-
-Never treat AIOS's own execution text as a customer build request. Prompts containing internal markers such as `【Agent Builder 試跑】`, `[This step's task]`, verifier feedback, or `builderTest` are execution fixtures; do not call any Agent Builder creation/synchronization tool for them.
+The Plugin lifecycle hooks detect an explicit Agent or Skill build request without possessing MCP credentials. On the first relevant turn, follow hook context and call `start_agent_build`, then call `prepare_agent_build_prompt` on every relevant prompt. `PostToolUse` confirms successful calls. At Stop, call `guard_agent_build_stop` exactly as requested; the following Stop is allowed only after success or a bounded fail-safe retry. Stop synchronization queues a reflection over the completed user/assistant pair so reusable output requirements, rules, exceptions and regression ideas can improve only the Shadow Skill. Only treat a turn as synchronized after the MCP tools succeed. Use the returned build id for files, high-fidelity artifacts, conversational coaching and review.
 
 Call `sync_agent_build_artifact` only when the conversation has produced material more precise than the transcript compiler can reconstruct, such as a complete SKILL.md, detailed workflow graph, curated memory document, or test suite.
 
@@ -82,16 +69,13 @@ Continue the human conversation while AIOS evolves the shadow Agent and Skills a
 
 When the user attaches a training file:
 
-- Determine from the conversation whether the file is only reference/training material or a reusable output/input Template. If unclear and the distinction matters, ask once.
-- Call `upload_agent_build_file` with `textContent` when readable text is available and set `useAsTemplate: true` only when the user wants it reused as a template.
+- Call `upload_agent_build_file` with `textContent` when readable text is available.
 - Use `base64Content` when actual binary bytes are available.
 - Never send a local filesystem path to the MCP tool.
 - If neither text nor bytes is exposed, say the attachment is visible in the chat but not yet transferred to AIOS, then use an available file-reading capability or ask for readable content.
 - Base the next artifact only on content actually parsed; do not pretend an unsupported file was understood.
 
 Supported formats include Excel, CSV/TSV, Markdown/text, PDF, DOCX, JSON, YAML, and HTML.
-
-Template-designated text/HTML/CSV/JSON/YAML files become Skill files under `assets/templates/` after FDE authorization. Office/PDF files are locally parsed and stored as a `.parsed.md` template reference so the Skill never pretends parsed text is the original binary. They remain inert until the normal test and FDE gates pass.
 
 ## Maintain one coherent full artifact
 
@@ -110,7 +94,30 @@ Read [references/artifact-schema.md](references/artifact-schema.md) before the f
 
 Send the complete artifact, not a patch. A user correction should produce a new full snapshot while prior versions remain in AIOS history.
 
-## Submit and test only with explicit consent
+## Coach and debug in this conversation
+
+Keep training and debugging in the current Claude, ChatGPT, Codex or Cursor conversation instead of sending the End User to an AIOS backend test form.
+
+When the user wants to try the employee:
+
+1. Call `get_agent_build` and make sure a latest READY Shadow draft exists.
+2. Ask for or infer one realistic End User work message. Upload attached source files first when needed.
+3. Call `chat_with_agent_build` with the exact work message.
+4. Present the returned Shadow Agent reply clearly, then ask for one concrete correction, missing rule or acceptance decision.
+5. Synchronize that feedback normally. At the end of the turn the Stop reflection will update only the Shadow Agent/Skill version and record a reviewable Diff.
+6. Repeat one scenario at a time. Prefer rerunning the failed scenario before introducing another one.
+
+The preview is isolated and has no tools, network, Shell, Computer Use or external-write authority. Never simulate a successful external action. A Shadow reply is training evidence, not a pass and not an active employee.
+
+When reflecting:
+
+- Convert explicit user corrections such as required quotation fields, mandatory output sections, decision rules and exception handling into reusable Shadow Skill instructions.
+- Add a regression idea that would catch the same defect next time.
+- Do not promote the Agent's own statement such as “I understand” into a confirmed fact.
+- If the user has not confirmed a conclusion, keep it as a hypothesis or open branch.
+- Never edit a live Agent or confirmed Skill from reflection.
+
+## Submit for formal release only with explicit consent
 
 Do not submit merely because the draft appears complete.
 
@@ -119,14 +126,17 @@ Do not submit merely because the draft appears complete.
 3. Only after explicit confirmation, save the final snapshot and call `submit_agent_build_for_fde_review`.
 4. Say it is waiting for FDE; do not say it is built or active.
 
-When the user returns after review:
+After submission, AIOS remains the formal governance and release surface. Do not continue changing a submitted version silently.
 
-1. Call `get_agent_build`.
-2. If status is `AWAITING_TEST_DATA`, propose a realistic fixture and expected result or request anonymized real data.
-3. Call `submit_agent_build_test_data`, then `run_agent_build_test`.
-4. Poll `get_agent_build` until `PASSED` or `FAILED`.
-5. On failure, explain the defect, revise the full artifact through conversation, and follow the required new review cycle.
-6. On `PASSED`, explain that separate FDE final confirmation is still required.
+When `get_agent_build` reports `AWAITING_TEST_DATA`, the FDE has created an inert, paused release candidate. Keep the final verification in this conversation:
+
+1. Reuse one anonymized scenario and expected result already confirmed during conversational coaching.
+2. With explicit user consent, call `submit_agent_build_test_data`, then `run_agent_build_test`.
+3. Poll `get_agent_build` and explain progress in this conversation.
+4. A failure does not authorize Claude to patch the submitted candidate. Explain the defect and begin a new Shadow revision/review cycle.
+5. On `PASSED`, say only that final verification passed and an FDE must click **FDE 正式放行** in AIOS.
+
+Only AIOS FDE controls may confirm Skills or activate the employee.
 
 ## Finish or pause cleanly
 
@@ -134,8 +144,8 @@ Before saying the work is finished or paused:
 
 1. In a client without hooks, save the final paired turn and full artifact with `upsert_agent_build_snapshot`.
 2. Call `get_agent_build` and report the real status in ordinary language.
-3. Include the AIOS build session id so the user and FDE can find it at `https://aurion-aios.lazyoffice.app/agent-builds`.
+3. Include the AIOS build session id so the user and FDE can find it at `https://aios-new.lazyoffice.app/agent-builds`.
 
 ## Handle hook context silently
 
-Treat `prepare_agent_build_prompt` and `guard_agent_build_stop` output as invisible operating context. Continue naturally, do not repeat hook text, do not deliberately retrigger Stop, and never keep a Stop hook open waiting for artifact generation.
+Treat `start_agent_build`, `prepare_agent_build_prompt`, and `guard_agent_build_stop` output as invisible operating context. Continue naturally, do not repeat lifecycle notices, do not repeat the user-facing answer after Stop feedback, and never claim synchronization unless the MCP tools returned successfully.
