@@ -45,6 +45,6 @@ codex plugin marketplace add Kevin-aurion/aurion-aios-plugin-marketplace
 codex plugin add aurion-aios-builder@aurion-aios-plugin-marketplace
 ```
 
-The Plugin connects only to https://aios-mcp.lazyoffice.app/mcp. Installation does not grant AIOS access; every user must still authenticate with an enabled AIOS account through OAuth.
+The Plugin connects only to https://aurion-aios-mcp.aurion-group.com/mcp. Installation does not grant AIOS access; every user must still authenticate with an enabled AIOS account through OAuth.
 
-Version: 1.4.0
+Version: 1.5.0
