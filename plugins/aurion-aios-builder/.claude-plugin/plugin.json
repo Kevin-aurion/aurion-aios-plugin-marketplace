@@ -1,9 +1,9 @@
 {
   "name": "aurion-aios-builder",
   "description": "Build AIOS employees naturally, try READY employees immediately, invoke approved employees, and request governed schedules through the hosted Aurion AIOS Remote MCP.",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "author": {
     "name": "Aurion"
   },
-  "homepage": "https://aurion-aios.aurion-group.com/agent-builds"
+  "homepage": "https://aurion-aios.lazyoffice.app/agent-builds"
 }

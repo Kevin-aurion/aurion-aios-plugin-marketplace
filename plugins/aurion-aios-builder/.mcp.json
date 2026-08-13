@@ -2,7 +2,7 @@
   "mcpServers": {
     "aurion_aios": {
       "type": "http",
-      "url": "https://aurion-aios-mcp.aurion-group.com/mcp"
+      "url": "https://aios-mcp.lazyoffice.app/mcp"
     }
   }
 }

@@ -4,12 +4,12 @@
 
 1. `build-aios-agent` Skill，讓模型用動態 Grill-me 方式協助建立 AI 員工。
 2. `use-aios-agent` Skill，讓模型免 FDE 立即試聊 READY 測試員工，或查找並呼叫已正式啟用的 AI 員工，也能提出排程申請。
-3. HTTPS Remote MCP Connector：`https://aurion-aios-mcp.aurion-group.com/mcp`。
+3. HTTPS Remote MCP Connector：`https://aios-mcp.lazyoffice.app/mcp`。
 4. 在 Claude Code／Cowork 中，以相容的 `SessionStart`、`UserPromptSubmit`、`PreToolUse`、`PermissionRequest`、`PostToolUse` 與 `Stop` command Hooks 建立完整同步閉環。
 
 客戶電腦不會安裝 AIOS server、資料庫、Cloudflare Tunnel 或本機 MCP 服務。第一次使用 MCP 時，ChatGPT、Codex 或 Claude 會開啟 AIOS OAuth 登入與授權頁；使用者用自己的 AIOS 帳號登入。建置結果會出現在：
 
-https://aurion-aios.aurion-group.com/agent-builds
+https://aurion-aios.lazyoffice.app/agent-builds
 
 所有外部建置內容都先是 shadow draft。READY Shadow Agent 可以立刻進行無工具、無外部副作用的測試對話；這個 Plugin 沒有 FDE 核准、確認 Skill 或正式啟用 Agent 的能力。
 
@@ -34,7 +34,7 @@ Hook 不會讀取、保存或轉送 OAuth Token，也不直接呼叫遠端 API�
 - 本資料夾的 `.codex-plugin/plugin.json` 是 Universal Plugin manifest。
 - `.mcp.json` 只指向公開 Remote MCP，不會啟動客戶端服務。
 - ChatGPT 網頁沒有 Claude Code 的完整生命週期 command Hooks；Skill 會在每個有意義的回合顯示答覆前，呼叫 `upsert_agent_build_snapshot` 一次，同步該回合與完整草稿。
-- 若以 ChatGPT Developer mode 建立個人 Plugin，請註冊 `https://aurion-aios-mcp.aurion-group.com/mcp`，完成 AIOS OAuth 登入後啟用 `build-aios-agent` 或 `use-aios-agent` Skill。
+- 若以 ChatGPT Developer mode 建立個人 Plugin，請註冊 `https://aios-mcp.lazyoffice.app/mcp`，完成 AIOS OAuth 登入後啟用 `build-aios-agent` 或 `use-aios-agent` Skill。
 
 ## Claude Chat 的限制
 

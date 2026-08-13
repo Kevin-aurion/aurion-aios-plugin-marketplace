@@ -7,7 +7,7 @@ description: Build, train, revise, continue, or test an Aurion AIOS employee thr
 
 Build the employee in the current conversation. Treat AIOS as the durable system of record and the FDE approval boundary.
 
-Use the hosted HTTPS Remote MCP at `https://aurion-aios-mcp.aurion-group.com/mcp`. Never ask the customer to install or run an AIOS backend, database, tunnel, Node service, or local MCP server.
+Use the hosted HTTPS Remote MCP at `https://aios-mcp.lazyoffice.app/mcp`. Never ask the customer to install or run an AIOS backend, database, tunnel, Node service, or local MCP server.
 
 ## Enforce the governance boundary
 
@@ -144,7 +144,7 @@ Before saying the work is finished or paused:
 
 1. In a client without hooks, save the final paired turn and full artifact with `upsert_agent_build_snapshot`.
 2. Call `get_agent_build` and report the real status in ordinary language.
-3. Include the AIOS build session id so the user and FDE can find it at `https://aurion-aios.aurion-group.com/agent-builds`.
+3. Include the AIOS build session id so the user and FDE can find it at `https://aurion-aios.lazyoffice.app/agent-builds`.
 
 ## Handle hook context silently
 
