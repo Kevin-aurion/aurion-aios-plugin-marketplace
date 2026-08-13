@@ -7,7 +7,7 @@ description: Build, train, revise, continue, or test an Aurion AIOS employee thr
 
 Build the employee in the current conversation. Treat AIOS as the durable system of record and the FDE approval boundary.
 
-Use the hosted HTTPS Remote MCP at `https://aios-mcp.lazyoffice.app/mcp`. Never ask the customer to install or run an AIOS backend, database, tunnel, Node service, or local MCP server.
+Use the hosted HTTPS Remote MCP at `https://aurion-aios-mcp.lazyoffice.app/mcp`. Never ask the customer to install or run an AIOS backend, database, tunnel, Node service, or local MCP server.
 
 ## Enforce the governance boundary
 

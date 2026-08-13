@@ -1,6 +1,6 @@
 {
   "name": "aurion-aios-builder",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Build governed AI employees, try READY employees safely, invoke approved employees, and request FDE-reviewed schedules through Aurion AIOS.",
   "author": {
     "name": "Aurion",
