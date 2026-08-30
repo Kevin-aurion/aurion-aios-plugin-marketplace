@@ -3,7 +3,7 @@
 這個套件同時支援 ChatGPT／Codex Universal Plugin 與 Claude Plugin。它只安裝客戶端設定：
 
 1. `build-aios-agent` Skill，讓模型用動態 Grill-me 方式協助建立 AI 員工。
-2. `use-aios-agent` Skill，讓模型免 FDE 立即試聊 READY 測試員工，或查找並呼叫已正式啟用的 AI 員工，也能提出排程與封存申請。
+2. `use-aios-agent` Skill，讓模型查找並呼叫已啟用的 AI 員工，也能管理排程與確認封存。
 3. HTTPS Remote MCP Connector：`https://aurion-aios-mcp.lazyoffice.app/mcp`。
 4. 在 Claude Code／Cowork 中，以相容的 `SessionStart`、`UserPromptSubmit`、`PreToolUse`、`PermissionRequest`、`PostToolUse` 與 `Stop` command Hooks 建立完整同步閉環。
 
@@ -11,11 +11,11 @@
 
 https://aurion-aios.lazyoffice.app/agent-builds
 
-所有外部建置內容都先是 shadow draft。READY Shadow Agent 可以立刻進行無工具、無外部副作用的測試對話；這個 Plugin 沒有 FDE 核准、確認 Skill、正式啟用或直接封存 Agent 的能力。
+所有外部訓練內容都保存於同一個 AIOS Build Session。使用者確認訓練完成後，Plugin 呼叫 `activate_agent_build`，直接建立或更新同一位可調度員工，不經 FDE 或強制 Builder 測試。
 
-READY 測試 Agent 可透過 `list_testable_agents`、`chat_with_test_agent` 直接試聊，不需 FDE，但不能使用工具、網路、Shell、Computer Use、排程或外部寫入。已啟用的 Agent 可由登入帳號透過 `list_available_agents`、`get_agent_capabilities`、`invoke_agent` 與 `get_agent_run` 使用；正式執行仍受 AIOS 的限制、成本、跨模型驗證與高風險核准閘約束。排程與封存只會建立待審提案，FDE 核准前不會生效。封存核准後會保留 Agent 稽核資料，但停用 Agent、工作流與排程，並拒絕後續調用。
+已啟用的 Agent 可由登入帳號透過 `list_available_agents`、`get_agent_capabilities`、`invoke_agent` 與 `get_agent_run` 使用。正式執行仍受 AIOS 的限制、成本與工具 allowlist 約束；訓練、排程與封存不再經過 FDE 審查。
 
-Hook 不會讀取、保存或轉送 OAuth Token，也不直接呼叫遠端 API。它只保存不含對話內容的同步狀態，並要求 Claude 透過已授權的 Aurion MCP 完成三段呼叫：建置第一輪的 `start_agent_build`、每輪的 `prepare_agent_build_prompt`、結束前的 `guard_agent_build_stop`。`PreToolUse` 與 `PermissionRequest` 只自動允許目前 Claude session 的三個 lifecycle 工具，以及 Build ID 完全吻合的 `sync_agent_build_turn`、`sync_agent_build_artifact`、`upsert_agent_build_snapshot`；上傳檔案、送審、測試、啟用與發布不會自動獲准。`PostToolUse` 只在實際 Plugin 或 Claude Desktop Connector 別名成功後確認 lifecycle 完成。若尚未確認，`Stop` 最多要求重試兩次後 fail-safe 放行，避免無限迴圈。
+Hook 不會讀取、保存或轉送 OAuth Token，也不直接呼叫遠端 API。它只保存不含對話內容的同步狀態，並要求 Claude 透過已授權的 Aurion MCP 完成建置第一輪的 `start_agent_build`、每輪同步與結束前的 `guard_agent_build_stop`。完整訓練快照成功保存後，只有使用者明確表示準備完成時才呼叫 `activate_agent_build`。
 
 ## 使用
 
