@@ -1,6 +1,6 @@
 {
   "name": "aurion-aios-builder",
-  "version": "1.7.1",
+  "version": "1.7.2+codex.20260830143549",
   "description": "Train and directly activate AIOS employees in one durable session, then invoke them through Aurion AIOS.",
   "author": {
     "name": "Aurion",

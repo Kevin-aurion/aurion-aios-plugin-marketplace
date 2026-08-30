@@ -9,6 +9,7 @@ Read this reference before the first `sync_agent_build_artifact` call. Send a co
   "identity": {
     "name": "客戶回款追蹤員",
     "purpose": "每天整理到期應收帳款，標示異常並產生可人工覆核的追蹤清單。",
+    "department": "財務",
     "workingStyle": [
       "先核對原始資料，再提出結論",
       "資料不完整時列入待確認，不自行猜測"
@@ -16,6 +17,8 @@ Read this reference before the first `sync_agent_build_artifact` call. Send a co
   }
 }
 ```
+
+`department` 應填實際業務部門或職能（例如「專案管理」「營運」「財務」）；只有真的無法判斷時才填「未分類」。
 
 `agentMarkdown` and `claudeMarkdown` are optional complete Markdown drafts. Do not put secrets in them.
 

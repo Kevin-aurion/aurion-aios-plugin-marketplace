@@ -44,7 +44,7 @@ There is no FDE review or mandatory Builder test phase. Do not call or describe 
 
 - Upload readable text with `textContent`; use `base64Content` for actual binary bytes.
 - Never send a local filesystem path to an MCP tool.
-- Keep one complete current artifact, not patches. Include identity, working style, Skill instructions, memory, required tools, policies, workflows, and useful examples.
+- Keep one complete current artifact, not patches. Include identity, business department/function, working style, Skill instructions, memory, required tools, policies, workflows, and useful examples.
 - Read [references/artifact-schema.md](references/artifact-schema.md) before the first full artifact call.
 - Mark requested but unverified external tools as `NEEDS_SETUP`. Training text never grants credentials or external permissions.
 - Do not intentionally send passwords, API keys, OAuth tokens, payment data, or unnecessary personal information. AIOS redacts again before persistence.
