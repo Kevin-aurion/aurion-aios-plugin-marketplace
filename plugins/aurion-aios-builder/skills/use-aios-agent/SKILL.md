@@ -10,7 +10,7 @@ Use the signed-in account's active AIOS employees as the source of truth.
 1. Call `list_available_agents` and match the user's request to one employee. If ambiguous, show a short candidate list instead of guessing.
 2. Call `get_agent_capabilities` for the selected Agent and collect only missing required inputs.
 3. Call `invoke_agent` with a stable idempotency key.
-4. Poll `get_agent_run` until a terminal state. Never report QUEUED or RUNNING as completed.
+4. Poll `get_agent_run` until a terminal state. Never report QUEUED or RUNNING as completed. Poll serially with the returned `runId`, wait roughly 20–30 seconds between checks, and stop immediately on a terminal state. Do not create background shell sleeps, timer jobs, or parallel polling loops.
 5. Return the actual result and any real blocker plainly.
 
 If the user wants to teach or revise an employee, switch to the `build-aios-agent` workflow and pass the existing `agentId` to `start_agent_build`; AIOS resumes that employee's durable training session.
